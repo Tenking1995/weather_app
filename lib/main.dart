@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:weather_app/services/repositories.dart';
+
+import 'models/weather_mode.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +36,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   double? lat;
   double? long;
+  WeatherModel? weatherModel;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,16 +54,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 const query = "Kuala Lumpur";
                 var addresses = await Geocoder.local.findAddressesFromQuery(query);
                 var first = addresses.first;
-                setState(() {
-                  lat = first.coordinates.latitude ?? -1;
-                  long = first.coordinates.longitude ?? -1;
-                });
+                lat = first.coordinates.latitude ?? 0;
+                long = first.coordinates.longitude ?? 0;
+                weatherModel = await Repositories.getWeather(lat!.round(), long!.round());
+                setState(() {});
               },
               child: const Text('Get Weather'),
             ),
             const SizedBox(height: 20),
             Text('Latitude: $lat'),
             Text('Longitude: $long'),
+            Text('Current Weather: ${weatherModel?.weather?[0].description}'),
           ],
         ),
       ),
