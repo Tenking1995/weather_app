@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,6 +31,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  double? lat;
+  double? long;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,10 +46,20 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text('Get Kuala Lumput Weather'),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                const query = "Kuala Lumpur";
+                var addresses = await Geocoder.local.findAddressesFromQuery(query);
+                var first = addresses.first;
+                setState(() {
+                  lat = first.coordinates.latitude ?? -1;
+                  long = first.coordinates.longitude ?? -1;
+                });
+              },
               child: const Text('Get Weather'),
             ),
             const SizedBox(height: 20),
+            Text('Latitude: $lat'),
+            Text('Longitude: $long'),
           ],
         ),
       ),
